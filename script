@@ -5,9 +5,15 @@
 # Programs needed: 7z s3cmd xz
 
 RELDIR=$(pwd)
-TAGVER=0.8.0
+TAGVER=0.8.1
+BOOTSTRAP_SRC="$HOME/dev/bootstrap-zig"
+# This must have zig built for the tagged release, along with having run `./zig build docs`.
+REL_SRC_BUILD="$HOME/Downloads/zig/build-release"
 
-cd ~/dev/bootstrap-zig
+set -e
+set -x
+
+cd "$BOOTSTRAP_SRC"
 ./build -j12 aarch64-linux-musl baseline
 ./build -j12 x86_64-linux-musl baseline
 ./build -j12 i386-linux-musl baseline
@@ -35,19 +41,19 @@ git archive --format=tar.xz -o $RELDIR/zig-bootstrap-$TAGVER.tar.xz --prefix=zig
 cd $RELDIR
 rm -rf tmp/
 
-cp -r ~/dev/bootstrap-zig/out/zig-aarch64-linux-musl-baseline zig-linux-aarch64-$TAGVER/
-cp -r ~/dev/bootstrap-zig/out/zig-arm-linux-musleabihf-generic+v7a zig-linux-armv7a-$TAGVER/
-cp -r ~/dev/bootstrap-zig/out/zig-i386-linux-musl-baseline zig-linux-i386-$TAGVER/
-cp -r ~/dev/bootstrap-zig/out/zig-riscv64-linux-musl-baseline zig-linux-riscv64-$TAGVER/
-cp -r ~/dev/bootstrap-zig/out/zig-x86_64-linux-musl-baseline zig-linux-x86_64-$TAGVER/
-#cp -r ~/dev/bootstrap-zig/out/zig-i386-windows-gnu-baseline zig-windows-i386-$TAGVER/
-#cp -r ~/dev/bootstrap-zig/out/zig-x86_64-windows-gnu-baseline zig-windows-x86_64-$TAGVER/
-cp -r ~/dev/bootstrap-zig/out/zig-x86_64-macos-gnu-baseline zig-macos-x86_64-$TAGVER/
-# cp -r ~/dev/bootstrap-zig/out/zig-aarch64-macos-gnu-apple_a14 zig-macos-aarch64-$TAGVER/
-rsync -avzu root@137.220.35.80:zig-bootstrap/out/zig-x86_64-native-baseline/ zig-freebsd-x86_64-$TAGVER/
-rsync -avzu 192.168.0.15:dev/zig-bootstrap/out/zig-i386-windows-gnu-baseline/ zig-windows-i386-$TAGVER/
-rsync -avzu 192.168.0.15:dev/zig-bootstrap/out/zig-x86_64-windows-gnu-baseline/ zig-windows-x86_64-$TAGVER/
-rsync -avzu 192.168.0.15:dev/zig-bootstrap/out/zig-aarch64-macos-gnu-apple_a14/ zig-macos-aarch64-$TAGVER/
+cp -r $BOOTSTRAP_SRC/out/zig-aarch64-linux-musl-baseline zig-linux-aarch64-$TAGVER/
+cp -r $BOOTSTRAP_SRC/out/zig-arm-linux-musleabihf-generic+v7a zig-linux-armv7a-$TAGVER/
+cp -r $BOOTSTRAP_SRC/out/zig-i386-linux-musl-baseline zig-linux-i386-$TAGVER/
+cp -r $BOOTSTRAP_SRC/out/zig-riscv64-linux-musl-baseline zig-linux-riscv64-$TAGVER/
+cp -r $BOOTSTRAP_SRC/out/zig-x86_64-linux-musl-baseline zig-linux-x86_64-$TAGVER/
+cp -r $BOOTSTRAP_SRC/out/zig-i386-windows-gnu-baseline zig-windows-i386-$TAGVER/
+cp -r $BOOTSTRAP_SRC/out/zig-x86_64-windows-gnu-baseline zig-windows-x86_64-$TAGVER/
+cp -r $BOOTSTRAP_SRC/out/zig-x86_64-macos-gnu-baseline zig-macos-x86_64-$TAGVER/
+cp -r $BOOTSTRAP_SRC/out/zig-aarch64-macos-gnu-apple_a14 zig-macos-aarch64-$TAGVER/
+rsync -avzu tmpfreebsd:zig-bootstrap/out/zig-x86_64-native-baseline/ zig-freebsd-x86_64-$TAGVER/
+#rsync -avzu 192.168.0.15:dev/zig-bootstrap/out/zig-i386-windows-gnu-baseline/ zig-windows-i386-$TAGVER/
+#rsync -avzu 192.168.0.15:dev/zig-bootstrap/out/zig-x86_64-windows-gnu-baseline/ zig-windows-x86_64-$TAGVER/
+#rsync -avzu 192.168.0.15:dev/zig-bootstrap/out/zig-aarch64-macos-gnu-apple_a14/ zig-macos-aarch64-$TAGVER/
 
 mv zig-linux-aarch64-$TAGVER/{bin/,}zig
 mv zig-linux-armv7a-$TAGVER/{bin/,}zig
@@ -93,16 +99,16 @@ rmdir zig-macos-aarch64-$TAGVER/{bin,lib2}
 rmdir zig-freebsd-x86_64-$TAGVER/{bin,lib2}
 rmdir zig-macos-x86_64-$TAGVER/{bin,lib2}
 
-cp ~/Downloads/zig/LICENSE zig-linux-aarch64-$TAGVER/
-cp ~/Downloads/zig/LICENSE zig-linux-armv7a-$TAGVER/
-cp ~/Downloads/zig/LICENSE zig-linux-i386-$TAGVER/
-cp ~/Downloads/zig/LICENSE zig-linux-riscv64-$TAGVER/
-cp ~/Downloads/zig/LICENSE zig-linux-x86_64-$TAGVER/
-cp ~/Downloads/zig/LICENSE zig-windows-i386-$TAGVER/
-cp ~/Downloads/zig/LICENSE zig-windows-x86_64-$TAGVER/
-cp ~/Downloads/zig/LICENSE zig-macos-aarch64-$TAGVER/
-cp ~/Downloads/zig/LICENSE zig-freebsd-x86_64-$TAGVER/
-cp ~/Downloads/zig/LICENSE zig-macos-x86_64-$TAGVER/
+cp $REL_SRC_BUILD/../LICENSE zig-linux-aarch64-$TAGVER/
+cp $REL_SRC_BUILD/../LICENSE zig-linux-armv7a-$TAGVER/
+cp $REL_SRC_BUILD/../LICENSE zig-linux-i386-$TAGVER/
+cp $REL_SRC_BUILD/../LICENSE zig-linux-riscv64-$TAGVER/
+cp $REL_SRC_BUILD/../LICENSE zig-linux-x86_64-$TAGVER/
+cp $REL_SRC_BUILD/../LICENSE zig-windows-i386-$TAGVER/
+cp $REL_SRC_BUILD/../LICENSE zig-windows-x86_64-$TAGVER/
+cp $REL_SRC_BUILD/../LICENSE zig-macos-aarch64-$TAGVER/
+cp $REL_SRC_BUILD/../LICENSE zig-freebsd-x86_64-$TAGVER/
+cp $REL_SRC_BUILD/../LICENSE zig-macos-x86_64-$TAGVER/
 
 mkdir zig-linux-aarch64-$TAGVER/doc/
 mkdir zig-linux-armv7a-$TAGVER/doc/
@@ -115,7 +121,7 @@ mkdir zig-macos-aarch64-$TAGVER/doc/
 mkdir zig-freebsd-x86_64-$TAGVER/doc/
 mkdir zig-macos-x86_64-$TAGVER/doc/
 
-cd ~/Downloads/zig/build
+cd $REL_SRC_BUILD
 ./zig test ../lib/std/std.zig -femit-docs=doc-linux-aarch64 -target aarch64-linux-musl -fno-emit-bin 
 ./zig test ../lib/std/std.zig -femit-docs=doc-linux-armv7a -target arm-linux-musl -mcpu=generic+v7a -fno-emit-bin 
 ./zig test ../lib/std/std.zig -femit-docs=doc-linux-i386 -target i386-linux-musl -fno-emit-bin 
@@ -128,27 +134,27 @@ cd ~/Downloads/zig/build
 ./zig test ../lib/std/std.zig -femit-docs=doc-freebsd-x86_64 -target x86_64-freebsd -fno-emit-bin 
 
 cd $RELDIR
-cp -r ~/Downloads/zig/build/doc-linux-aarch64 zig-linux-aarch64-$TAGVER/doc/std
-cp -r ~/Downloads/zig/build/doc-linux-armv7a zig-linux-armv7a-$TAGVER/doc/std
-cp -r ~/Downloads/zig/build/doc-linux-i386 zig-linux-i386-$TAGVER/doc/std
-cp -r ~/Downloads/zig/build/doc-linux-riscv64 zig-linux-riscv64-$TAGVER/doc/std
-cp -r ~/Downloads/zig/build/doc-linux-x86_64 zig-linux-x86_64-$TAGVER/doc/std
-cp -r ~/Downloads/zig/build/doc-windows-i386 zig-windows-i386-$TAGVER/doc/std
-cp -r ~/Downloads/zig/build/doc-windows-x86_64 zig-windows-x86_64-$TAGVER/doc/std
-cp -r ~/Downloads/zig/build/doc-macos-aarch64 zig-macos-aarch64-$TAGVER/doc/std
-cp -r ~/Downloads/zig/build/doc-freebsd-x86_64 zig-freebsd-x86_64-$TAGVER/doc/std
-cp -r ~/Downloads/zig/build/doc-macos-x86_64 zig-macos-x86_64-$TAGVER/doc/std
+cp -r $REL_SRC_BUILD/doc-linux-aarch64 zig-linux-aarch64-$TAGVER/doc/std
+cp -r $REL_SRC_BUILD/doc-linux-armv7a zig-linux-armv7a-$TAGVER/doc/std
+cp -r $REL_SRC_BUILD/doc-linux-i386 zig-linux-i386-$TAGVER/doc/std
+cp -r $REL_SRC_BUILD/doc-linux-riscv64 zig-linux-riscv64-$TAGVER/doc/std
+cp -r $REL_SRC_BUILD/doc-linux-x86_64 zig-linux-x86_64-$TAGVER/doc/std
+cp -r $REL_SRC_BUILD/doc-windows-i386 zig-windows-i386-$TAGVER/doc/std
+cp -r $REL_SRC_BUILD/doc-windows-x86_64 zig-windows-x86_64-$TAGVER/doc/std
+cp -r $REL_SRC_BUILD/doc-macos-aarch64 zig-macos-aarch64-$TAGVER/doc/std
+cp -r $REL_SRC_BUILD/doc-freebsd-x86_64 zig-freebsd-x86_64-$TAGVER/doc/std
+cp -r $REL_SRC_BUILD/doc-macos-x86_64 zig-macos-x86_64-$TAGVER/doc/std
 
-cp ~/Downloads/zig/zig-cache/langref.html zig-linux-aarch64-$TAGVER/doc/
-cp ~/Downloads/zig/zig-cache/langref.html zig-linux-armv7a-$TAGVER/doc/
-cp ~/Downloads/zig/zig-cache/langref.html zig-linux-i386-$TAGVER/doc/
-cp ~/Downloads/zig/zig-cache/langref.html zig-linux-riscv64-$TAGVER/doc/
-cp ~/Downloads/zig/zig-cache/langref.html zig-linux-x86_64-$TAGVER/doc/
-cp ~/Downloads/zig/zig-cache/langref.html zig-windows-i386-$TAGVER/doc/
-cp ~/Downloads/zig/zig-cache/langref.html zig-windows-x86_64-$TAGVER/doc/
-cp ~/Downloads/zig/zig-cache/langref.html zig-macos-aarch64-$TAGVER/doc/
-cp ~/Downloads/zig/zig-cache/langref.html zig-freebsd-x86_64-$TAGVER/doc/
-cp ~/Downloads/zig/zig-cache/langref.html zig-macos-x86_64-$TAGVER/doc/
+cp $REL_SRC_BUILD/../zig-cache/langref.html zig-linux-aarch64-$TAGVER/doc/
+cp $REL_SRC_BUILD/../zig-cache/langref.html zig-linux-armv7a-$TAGVER/doc/
+cp $REL_SRC_BUILD/../zig-cache/langref.html zig-linux-i386-$TAGVER/doc/
+cp $REL_SRC_BUILD/../zig-cache/langref.html zig-linux-riscv64-$TAGVER/doc/
+cp $REL_SRC_BUILD/../zig-cache/langref.html zig-linux-x86_64-$TAGVER/doc/
+cp $REL_SRC_BUILD/../zig-cache/langref.html zig-windows-i386-$TAGVER/doc/
+cp $REL_SRC_BUILD/../zig-cache/langref.html zig-windows-x86_64-$TAGVER/doc/
+cp $REL_SRC_BUILD/../zig-cache/langref.html zig-macos-aarch64-$TAGVER/doc/
+cp $REL_SRC_BUILD/../zig-cache/langref.html zig-freebsd-x86_64-$TAGVER/doc/
+cp $REL_SRC_BUILD/../zig-cache/langref.html zig-macos-x86_64-$TAGVER/doc/
 
 tar cJf zig-linux-aarch64-$TAGVER.tar.xz zig-linux-aarch64-$TAGVER/
 tar cJf zig-linux-armv7a-$TAGVER.tar.xz zig-linux-armv7a-$TAGVER/
