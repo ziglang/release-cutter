@@ -21,14 +21,17 @@ fn dumpUsageAndExit() noreturn {
     std.process.exit(1);
 }
 
+// TODO make it support apple_a14
+// TODO make the windows ones use .zip and make them rename .a files to .lib
+
 const triples = [_][]const u8{
-    "x86_64-windows-gnu",
+    //"x86_64-windows-gnu",
     "x86_64-macos-gnu",
-    "x86_64-linux-musl",
-    "x86_64-freebsd-gnu",
-    "x86_64-netbsd-gnu",
+    //"x86_64-linux-musl",
+    //"x86_64-freebsd-gnu",
+    //"x86_64-netbsd-gnu",
     "aarch64-macos-gnu",
-    "aarch64-linux-musl",
+    //"aarch64-linux-musl",
 };
 
 pub fn main() !void {

@@ -1,3 +1,16 @@
+#
+#
+#
+#
+#
+#
+# TODO add aarch64-windows to this script!!!
+
+
+
+
+
+
 # Edit the version numbers in:
 # * CMakeLists.txt
 # * build.zig
