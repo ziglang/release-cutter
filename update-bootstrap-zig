@@ -1,0 +1,25 @@
+#!/bin/sh
+
+set -e
+
+BOOTSTRAP_REPO="$1"
+ZIG_REPO="$2"
+ZIG_VERSION="$3"
+
+cd "$BOOTSTRAP_REPO"
+rm -rf zig/
+
+cp -r "$ZIG_REPO" ./
+rm -rf \
+  zig/.github \
+  zig/.gitignore \
+  zig/.git \
+  zig/ci \
+  zig/.builds
+
+sed -i "/^ZIG_VERSION=\".*\"\$/c\\ZIG_VERSION=\"$ZIG_VERSION\"" build
+
+git add -A
+git commit -m "update zig sources to $ZIG_VERSION"
+
+echo "This script made a commit to zig-bootstrap on your behalf; don't forget to inspect it before pushing!"

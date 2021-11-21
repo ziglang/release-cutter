@@ -1,0 +1,28 @@
+#!/bin/sh
+
+set -e
+
+BOOTSTRAP_REPO="$1"
+LLVM_REPO="$2"
+
+cd "$BOOTSTRAP_REPO"
+rm -rf clang lld llvm
+
+cp -r "$LLVM_REPO/llvm/" ./
+cp -r "$LLVM_REPO/clang/" ./
+cp -r "$LLVM_REPO/lld/" ./
+rm -rf {llvm,lld,clang}/build-*/ \
+  clang/test/ \
+  clang/tools/scan-view/ \
+  lld/.clang-tidy \
+  lld/test/ \
+  llvm/test/ \
+  llvm/utils/{benchmark,docker,gn,lit,vim,vscode}/ \
+  clang/docs/ \
+  llvm/docs/ \
+  llvm/bindings/ \
+  llvm/examples/
+
+echo "Inspect git status, then do the following commands:"
+echo 'git commit -a -m "update LLVM sources to XYZ"'
+echo "git cherry-pick 8dc94ab3d4f1d7331580694ac1cea0d4e86deff1"
