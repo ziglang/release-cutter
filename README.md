@@ -24,7 +24,7 @@ These are hard-coded into the script; if these change the .zig code must be upda
 }
 ```
 
-Output: (2021-09-06)
+Output: (2021-12-18)
 
 ```
 {
@@ -101,7 +101,7 @@ In the meantime, there's this
 [explorer thing](https://docs.github.com/en/graphql/overview/explorer).
 
 ```gql
-query GetSponsors($tierId: String) {
+query GetSponsors($tierId: ID) {
   organization(login: "ziglang") {
     sponsors(tierId: $tierId, first: 100) {
       nodes {

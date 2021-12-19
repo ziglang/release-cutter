@@ -67,7 +67,7 @@ fn dumpUsageAndExit() noreturn {
 
 pub fn main() !void {
     var arena_allocator = std.heap.ArenaAllocator.init(std.heap.page_allocator);
-    const arena = &arena_allocator.allocator;
+    const arena = arena_allocator.allocator();
 
     const args = try std.process.argsAlloc(arena);
 
@@ -157,6 +157,6 @@ pub fn main() !void {
     try bw.flush();
 }
 
-fn escapeHtml(arena: *std.mem.Allocator, text: []const u8) ![]u8 {
+fn escapeHtml(arena: std.mem.Allocator, text: []const u8) ![]u8 {
     return arena.dupe(u8, text);
 }
