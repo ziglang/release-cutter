@@ -20,6 +20,7 @@ rm -rf {llvm,lld,clang}/build-*/ \
   llvm/utils/{benchmark,docker,gn,lit,vim,vscode}/ \
   clang/docs/ \
   llvm/docs/ \
+  lld/docs/ \
   llvm/bindings/ \
   llvm/examples/
 
