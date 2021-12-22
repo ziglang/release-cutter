@@ -133,10 +133,17 @@ pub fn main() !void {
 
             switch (tool) {
                 .homepage => {
+                    const escaped_name = try escapeHtml(arena, name);
                     if (website) |w| {
-                        try stdout.print("- [{s}]({s})\n", .{ name, w });
+                        const escaped_w = try escapeHtml(arena, w);
+                        try stdout.print(
+                            \\<li><a href="{s}" rel="nofollow noopener" target="_blank" class="external-link">{s}</a></li>
+                            \\
+                        , .{
+                            escaped_w, escaped_name,
+                        });
                     } else {
-                        try stdout.print("- {s}\n", .{name});
+                        try stdout.print("<li>{s}</li>\n", .{escaped_name});
                     }
                 },
                 .release => {
