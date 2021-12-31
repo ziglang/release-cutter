@@ -27,3 +27,4 @@ rm -rf {llvm,lld,clang}/build-*/ \
 echo "Inspect git status, then do the following commands:"
 echo 'git commit -a -m "update LLVM sources to XYZ"'
 echo "git cherry-pick 8dc94ab3d4f1d7331580694ac1cea0d4e86deff1"
+echo "git cherry-pick b95a76c772dc98ffed4e098f59d670e17e142b5a"
