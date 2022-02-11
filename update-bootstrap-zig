@@ -15,8 +15,11 @@ rm -rf \
   zig/.gitignore \
   zig/.git \
   zig/ci \
+  zig/CODE_OF_CONDUCT.md \
+  zig/CONTRIBUTING.md \
   zig/.builds \
-  zig/build
+  zig/build \
+  zig/build-*
 
 sed -i "/^ZIG_VERSION=\".*\"\$/c\\ZIG_VERSION=\"$ZIG_VERSION\"" build
 
