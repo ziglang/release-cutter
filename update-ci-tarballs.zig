@@ -142,7 +142,7 @@ pub fn main() !void {
             break :tarball tar_xz_path;
         };
 
-        try progress.log("s3cmd put -P --add-header=\"cache-control: public, max-age=31536000, immutable\" \"{s}\" s3://ziglang.org/deps/\n", .{tarball_path});
+        progress.log("s3cmd put -P --add-header=\"cache-control: public, max-age=31536000, immutable\" \"{s}\" s3://ziglang.org/deps/\n", .{tarball_path});
     }
 }
 
@@ -161,8 +161,7 @@ fn exec(arena: std.mem.Allocator, argv: []const []const u8) ![]const u8 {
 }
 
 fn execCwd(arena: std.mem.Allocator, argv: []const []const u8, cwd: ?fs.Dir) ![]const u8 {
-    const child = try std.ChildProcess.init(argv, arena);
-    defer child.deinit();
+    var child = std.ChildProcess.init(argv, arena);
 
     child.cwd_dir = cwd;
     child.stdin_behavior = .Inherit;
