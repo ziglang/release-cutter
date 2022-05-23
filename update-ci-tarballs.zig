@@ -28,9 +28,9 @@ const Tarball = struct {
 
 const tarballs = [_]Tarball{
     .{ .triple = "x86_64-windows-gnu", .mcpu = "baseline" },
-    .{ .triple = "x86_64-macos-gnu", .mcpu = "baseline" },
+    .{ .triple = "x86_64-macos-none", .mcpu = "baseline" },
     .{ .triple = "x86_64-linux-musl", .mcpu = "baseline" },
-    .{ .triple = "aarch64-macos-gnu", .mcpu = "apple_a14" },
+    .{ .triple = "aarch64-macos-none", .mcpu = "apple_a14" },
     .{ .triple = "aarch64-linux-musl", .mcpu = "baseline" },
     .{ .triple = "x86_64-freebsd-gnu", .mcpu = "baseline" },
 };
