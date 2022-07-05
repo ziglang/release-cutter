@@ -7,7 +7,7 @@ const usage =
     \\Before running this script, you must have already run the
     \\./build script from zig-bootstrap on all the targets
     \\that are listed in the source file of this executable
-    \\using the "baseline" CPU feature set.
+    \\using the corresponding mcpu setting.
     \\
     \\For targets that zig-bootstrap cannot cross compile, such as
     \\freebsd and netbsd, you must have done it on another computer
