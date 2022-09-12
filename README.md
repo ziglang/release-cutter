@@ -2,6 +2,39 @@
 
 Helpful scripts for cutting a Zig release.
 
+## Making a New CI Tarball
+
+First, use [zig-bootstrap](https://github.com/ziglang/zig-bootstrap) to build the
+relevant tarball(s) for the targets the CI needs.
+
+Next, run the update-ci-tarballs.zig script. It has its own usage text to guide
+you through the process. The final step is using `s3cmd` to upload the tarballs.
+The script prints suggested commands for you to run which you can copy and paste.
+
+Next you have to do CI chores to update to the new tarball. Each CI system has
+their own different chore you have to do.
+
+ * ci.ziglang.org
+   - copy the x86_64-linux-musl tarball to ci.ziglang.org:/depot/deps
+   - ssh into ci.ziglang.org and follow
+     [these directions](https://github.com/ziglang/zig-ci/blob/main/docker/debian-amd64-11.1.md),
+     with two modifications:
+     - replace `zig+llvm+lld+clang-x86_64-linux-musl-0.9.1.tar.xz` and
+       `zig+llvm+lld+clang-aarch64-macos-none-0.9.1.tar.xz` with your new tarballs.
+     - bump the version of `debian-amd64:11.1-9` to the next number after the one in
+       the main zig git repo, the `image` fields of `ci/zinc/drone.yml`.
+   - in the main zig git repo, update the `image` fields of `ci/zinc/drone.yml`.
+ * azure
+   - in the main zig git repo, update `ZIG_LLVM_CLANG_LLD_NAME` in `azure/pipelines.yml`.
+   - in the main zig git repo, update `CACHE_BASENAME` in `azure/macos_script`.
+ * drone
+   - rent an arm64 server from e.g. vultr or digitalocean
+   - use [docker-zig](https://github.com/ziglang/docker-zig) to build and publish an updated
+     docker image
+   - in the main zig git repo, update the `image` fields of `ci/drone/drone.yml`
+ * lavahut
+   - in the main zig git repo, update `CACHE_BASENAME` in `srht/freebsd_script`.
+
 ## GitHub GraphQL Snippets
 
 ### List All the Tiers
