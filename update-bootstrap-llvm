@@ -35,6 +35,4 @@ rm -rf \
 
 echo "Inspect git status, then do the following commands:"
 echo 'git commit -a -m "update LLVM sources to XYZ"'
-echo "git cherry-pick 52618cb7243119ab1b4228f7c809bbfe35a725ba"
-echo "git cherry-pick bf6e8cf1e4f47171304524b14614d820b8c73bbd"
-echo "merge one of those two commits with f53db28e8cdf5661e3980ee50e745b88e452a280"
+echo "next, look at the commits directly after the previous update commit and apply relevant patches"
