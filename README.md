@@ -35,6 +35,18 @@ their own different chore you have to do.
  * lavahut
    - in the main zig git repo, update `CACHE_BASENAME` in `srht/freebsd_script`.
 
+### Template for Copying Artifacts from FreeBSD Server
+
+1. Rent FreeBSD VPS and run zig-bootstrap on it.
+2. cd into zig-bootstrap, run these with the IP edited:
+
+```
+rsync -avzu root@96.30.194.18:zig-bootstrap/out/x86_64-native-baseline/ ./out/x86_64-freebsd-gnu-baseline/
+rsync -avzu root@96.30.194.18:zig-bootstrap/out/zig-x86_64-native-baseline/ ./out/zig-x86_64-freebsd-gnu-baseline/
+```
+
+Then you can use the update-ci-tarballs.zig script including for FreeBSD.
+
 ## GitHub GraphQL Snippets
 
 ### List All the Tiers
