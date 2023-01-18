@@ -4,7 +4,7 @@ WWWSRC="$HOME/dev/www.ziglang.org"
 ZIGSRC="$HOME/Downloads/zig"
 TMPDIR="$HOME/tmp"
 OLDVER="0.9.0"
-NEWVER="0.9.1"
+NEWVER="0.10.0"
 
 set -e
 
