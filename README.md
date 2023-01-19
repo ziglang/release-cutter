@@ -173,12 +173,12 @@ query GetSponsors($tierId: ID) {
 * Do the query multiple times, annotating each result with its `tierId`
   (I couldn't figure out how to do this directly with GraphQL. Annotate
   each one by saving each query into a file named `tiers-data/$tierId.json`.
-  - `{"tierId": "MDEyOlNwb25zb3JzVGllcjUwMjgx"}`
-  - `{"tierId": "MDEyOlNwb25zb3JzVGllcjUwMDE0"}`
-  - `{"tierId": "MDEyOlNwb25zb3JzVGllcjM0MDc3"}`
-  - `{"tierId": "MDEyOlNwb25zb3JzVGllcjM0MDc1"}`
-  - `{"tierId": "MDEyOlNwb25zb3JzVGllcjM0MDcw"}`
-  - `{"tierId": "MDEyOlNwb25zb3JzVGllcjM0MDcx"}`
+  - `{"tierId": "ST_kwHOAarWdc3EaQ"}`
+  - `{"tierId": "ST_kwHOAarWdc3DXg"}`
+  - `{"tierId": "ST_kwHOAarWdc2FHQ"}`
+  - `{"tierId": "ST_kwHOAarWdc2FGw"}`
+  - `{"tierId": "ST_kwHOAarWdc2FFg"}`
+  - `{"tierId": "ST_kwHOAarWdc2FFw"}`
 
 ### Command Line Application
 

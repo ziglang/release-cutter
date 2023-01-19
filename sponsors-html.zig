@@ -23,37 +23,37 @@ const Mention = enum { none, name, hyperlink };
 /// Manually sorted descending by amount.
 const tiers = [_]Tier{
     .{
-        .id = "MDEyOlNwb25zb3JzVGllcjUwMjgx",
+        .id = "ST_kwHOAarWdc3EaQ",
         .homepage = .hyperlink,
         .release = .hyperlink,
         .amt = 5000,
     },
     .{
-        .id = "MDEyOlNwb25zb3JzVGllcjUwMDE0",
+        .id = "ST_kwHOAarWdc3DXg",
         .homepage = .hyperlink,
         .release = .hyperlink,
         .amt = 1200,
     },
     .{
-        .id = "MDEyOlNwb25zb3JzVGllcjM0MDc3",
+        .id = "ST_kwHOAarWdc2FHQ",
         .homepage = .hyperlink,
         .release = .hyperlink,
         .amt = 400,
     },
     .{
-        .id = "MDEyOlNwb25zb3JzVGllcjM0MDc1",
+        .id = "ST_kwHOAarWdc2FGw",
         .homepage = .name,
         .release = .hyperlink,
         .amt = 200,
     },
     .{
-        .id = "MDEyOlNwb25zb3JzVGllcjM0MDcw",
+        .id = "ST_kwHOAarWdc2FFg",
         .homepage = .none,
         .release = .hyperlink,
         .amt = 100,
     },
     .{
-        .id = "MDEyOlNwb25zb3JzVGllcjM0MDcx",
+        .id = "ST_kwHOAarWdc2FFw",
         .homepage = .none,
         .release = .name,
         .amt = 50,
