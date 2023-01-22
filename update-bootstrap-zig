@@ -22,6 +22,7 @@ rm -rf \
   zig/build-*
 
 sed -i "/^ZIG_VERSION=\".*\"\$/c\\ZIG_VERSION=\"$ZIG_VERSION\"" build
+sed -i "/^ \* zig /c\\ * zig $ZIG_VERSION" README.md
 
 git add -A
 git commit -m "update zig sources to $ZIG_VERSION"
