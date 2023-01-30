@@ -6,11 +6,12 @@ BOOTSTRAP_REPO="$1"
 LLVM_REPO="$2"
 
 cd "$BOOTSTRAP_REPO"
-rm -rf clang lld llvm
+rm -rf clang lld llvm cmake
 
 cp -r "$LLVM_REPO/llvm/" ./
 cp -r "$LLVM_REPO/clang/" ./
 cp -r "$LLVM_REPO/lld/" ./
+cp -r "$LLVM_REPO/cmake/" ./
 rm -rf \
   {llvm,lld,clang}/build-*/ \
   clang/test/ \
@@ -31,7 +32,23 @@ rm -rf \
   lld/docs/ \
   llvm/bindings/ \
   llvm/examples/ \
-  clang/examples/
+  clang/examples/ \
+  llvm/utils/*.py \
+  $(find -name ".clang-format" -o -name "*.rst") \
+  llvm/unittests \
+  llvm/utils/filecheck_lint \
+  llvm/utils/split-file \
+  llvm/utils/TableGen/jupyter \
+  llvm/utils/FileCheck \
+  llvm/utils/PerfectShuffle \
+  llvm/utils/count \
+  llvm/utils/not \
+  llvm/utils/UnicodeData \
+  llvm/utils/yaml-bench \
+  llvm/utils/split-file \
+  llvm/utils/llvm-lit \
+  llvm/utils/llvm-locstats
+
 
 echo "Inspect git status, then do the following commands:"
 echo 'git commit -a -m "update LLVM sources to XYZ"'
