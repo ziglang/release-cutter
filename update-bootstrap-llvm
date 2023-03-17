@@ -16,6 +16,7 @@ rm -rf \
   {llvm,lld,clang}/build-*/ \
   clang/test/ \
   clang/tools/scan-view/ \
+  clang/www/ \
   lld/.clang-tidy \
   lld/test/ \
   llvm/test/ \
@@ -35,6 +36,7 @@ rm -rf \
   clang/examples/ \
   llvm/utils/*.py \
   $(find -name ".clang-format" -o -name "*.rst") \
+  clang/unittests \
   llvm/unittests \
   llvm/utils/filecheck_lint \
   llvm/utils/split-file \
