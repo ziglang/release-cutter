@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -e
+set -eu
 
 BOOTSTRAP_REPO="$1"
 ZIG_REPO="$2"
@@ -9,17 +9,11 @@ ZIG_VERSION="$3"
 cd "$BOOTSTRAP_REPO"
 rm -rf zig/
 
-cp -r "$ZIG_REPO" ./
+git -C "$ZIG_REPO" archive --format=tar --prefix=zig/ master | tar -x
 rm -rf \
   zig/.github \
   zig/.gitignore \
-  zig/.git \
-  zig/ci \
-  zig/CODE_OF_CONDUCT.md \
-  zig/CONTRIBUTING.md \
-  zig/.builds \
-  zig/build \
-  zig/build-*
+  zig/ci
 
 sed -i "/^ZIG_VERSION=\".*\"\$/c\\ZIG_VERSION=\"$ZIG_VERSION\"" build
 sed -i "/^ \* zig /c\\ * zig $ZIG_VERSION" README.md
