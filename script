@@ -118,18 +118,6 @@ cp $REL_SRC_BUILD/../LICENSE zig-macos-aarch64-$TAGVER/
 cp $REL_SRC_BUILD/../LICENSE zig-macos-x86_64-$TAGVER/
 cp $REL_SRC_BUILD/../LICENSE zig-freebsd-x86_64-$TAGVER/
 
-mkdir zig-linux-aarch64-$TAGVER/doc/
-mkdir zig-linux-armv7a-$TAGVER/doc/
-mkdir zig-linux-i386-$TAGVER/doc/
-mkdir zig-linux-riscv64-$TAGVER/doc/
-mkdir zig-linux-x86_64-$TAGVER/doc/
-#mkdir zig-windows-i386-$TAGVER/doc/
-mkdir zig-windows-x86_64-$TAGVER/doc/
-mkdir zig-windows-aarch64-$TAGVER/doc/
-mkdir zig-macos-aarch64-$TAGVER/doc/
-mkdir zig-macos-x86_64-$TAGVER/doc/
-mkdir zig-freebsd-x86_64-$TAGVER/doc/
-
 cd $REL_SRC_BUILD
 stage3/bin/zig test ../lib/std/std.zig -femit-docs=doc-linux-aarch64 -target aarch64-linux-musl -fno-emit-bin 
 stage3/bin/zig test ../lib/std/std.zig -femit-docs=doc-linux-armv7a -target arm-linux-musl -mcpu=generic+v7a -fno-emit-bin 
@@ -155,18 +143,6 @@ cp -r $REL_SRC_BUILD/doc-windows-aarch64 zig-windows-aarch64-$TAGVER/doc/std
 cp -r $REL_SRC_BUILD/doc-macos-aarch64 zig-macos-aarch64-$TAGVER/doc/std
 cp -r $REL_SRC_BUILD/doc-macos-x86_64 zig-macos-x86_64-$TAGVER/doc/std
 cp -r $REL_SRC_BUILD/doc-freebsd-x86_64 zig-freebsd-x86_64-$TAGVER/doc/std
-
-cp $REL_SRC_BUILD/../zig-cache/langref.html zig-linux-aarch64-$TAGVER/doc/
-cp $REL_SRC_BUILD/../zig-cache/langref.html zig-linux-armv7a-$TAGVER/doc/
-cp $REL_SRC_BUILD/../zig-cache/langref.html zig-linux-i386-$TAGVER/doc/
-cp $REL_SRC_BUILD/../zig-cache/langref.html zig-linux-riscv64-$TAGVER/doc/
-cp $REL_SRC_BUILD/../zig-cache/langref.html zig-linux-x86_64-$TAGVER/doc/
-#cp $REL_SRC_BUILD/../zig-cache/langref.html zig-windows-i386-$TAGVER/doc/
-cp $REL_SRC_BUILD/../zig-cache/langref.html zig-windows-x86_64-$TAGVER/doc/
-cp $REL_SRC_BUILD/../zig-cache/langref.html zig-windows-aarch64-$TAGVER/doc/
-cp $REL_SRC_BUILD/../zig-cache/langref.html zig-macos-aarch64-$TAGVER/doc/
-cp $REL_SRC_BUILD/../zig-cache/langref.html zig-macos-x86_64-$TAGVER/doc/
-cp $REL_SRC_BUILD/../zig-cache/langref.html zig-freebsd-x86_64-$TAGVER/doc/
 
 #rm -rf zig-linux-aarch64-$TAGVER/doc/std/src
 #rm -rf zig-linux-armv7a-$TAGVER/doc/std/src
