@@ -23,37 +23,37 @@ const Mention = enum { none, name, hyperlink };
 /// Manually sorted descending by amount.
 const tiers = [_]Tier{
     .{
-        .id = "MDEyOlNwb25zb3JzVGllcjUwMjgx",
+        .id = "ST_kwHOAarWdc3EaQ",
         .homepage = .hyperlink,
         .release = .hyperlink,
         .amt = 5000,
     },
     .{
-        .id = "MDEyOlNwb25zb3JzVGllcjUwMDE0",
+        .id = "ST_kwHOAarWdc3DXg",
         .homepage = .hyperlink,
         .release = .hyperlink,
         .amt = 1200,
     },
     .{
-        .id = "MDEyOlNwb25zb3JzVGllcjM0MDc3",
+        .id = "ST_kwHOAarWdc2FHQ",
         .homepage = .hyperlink,
         .release = .hyperlink,
         .amt = 400,
     },
     .{
-        .id = "MDEyOlNwb25zb3JzVGllcjM0MDc1",
+        .id = "ST_kwHOAarWdc2FGw",
         .homepage = .name,
         .release = .hyperlink,
         .amt = 200,
     },
     .{
-        .id = "MDEyOlNwb25zb3JzVGllcjM0MDcw",
+        .id = "ST_kwHOAarWdc2FFg",
         .homepage = .none,
         .release = .hyperlink,
         .amt = 100,
     },
     .{
-        .id = "MDEyOlNwb25zb3JzVGllcjM0MDcx",
+        .id = "ST_kwHOAarWdc2FFw",
         .homepage = .none,
         .release = .name,
         .amt = 50,
@@ -87,12 +87,12 @@ pub fn main() !void {
         const basename = try std.fmt.allocPrint(arena, "{s}.json", .{tier.id});
         std.log.debug("looking at {s}", .{basename});
         const json_text = try dir.readFileAlloc(arena, basename, 10 * 1024 * 1024);
-        var parser = std.json.Parser.init(arena, false);
+        var parser = std.json.Parser.init(arena, .alloc_always);
         const tree = try parser.parse(json_text);
 
-        const data_obj = &tree.root.Object.get("data").?.Object;
-        const sponsors_obj = &data_obj.get("organization").?.Object.get("sponsors").?.Object;
-        const nodes_array = &sponsors_obj.get("nodes").?.Array;
+        const data_obj = &tree.root.object.get("data").?.object;
+        const sponsors_obj = &data_obj.get("organization").?.object.get("sponsors").?.object;
+        const nodes_array = &sponsors_obj.get("nodes").?.array;
         for (nodes_array.items) |node| {
             const skip = switch (tool) {
                 .homepage => tier.homepage == .none,
@@ -101,11 +101,11 @@ pub fn main() !void {
             if (skip) continue;
 
             const name = name: {
-                if (node.Object.get("name")) |n| switch (n) {
-                    .String => |s| break :name s,
+                if (node.object.get("name")) |n| switch (n) {
+                    .string => |s| break :name s,
                     else => {},
                 };
-                break :name node.Object.get("login").?.String;
+                break :name node.object.get("login").?.string;
             };
             const need_website = switch (tool) {
                 .homepage => tier.homepage == .hyperlink,
@@ -113,21 +113,21 @@ pub fn main() !void {
             };
             var website: ?[]const u8 = null;
             if (need_website) website: {
-                if (node.Object.get("websiteUrl")) |n| switch (n) {
-                    .String => |s| {
+                if (node.object.get("websiteUrl")) |n| switch (n) {
+                    .string => |s| {
                         website = s;
                         break :website;
                     },
                     else => {},
                 };
-                if (node.Object.get("twitterUsername")) |n| switch (n) {
-                    .String => |s| {
+                if (node.object.get("twitterUsername")) |n| switch (n) {
+                    .string => |s| {
                         website = try std.fmt.allocPrint(arena, "https://twitter.com/{s}", .{s});
                         break :website;
                     },
                     else => {},
                 };
-                const login = node.Object.get("login").?.String;
+                const login = node.object.get("login").?.string;
                 website = try std.fmt.allocPrint(arena, "https://github.com/{s}", .{login});
             }
 
