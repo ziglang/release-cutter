@@ -7,7 +7,7 @@ const usage =
     \\Before running this script, you must have already run the
     \\./build script from zig-bootstrap on all the targets
     \\that are listed in the source file of this executable
-    \\using the "baseline" CPU feature set.
+    \\using the corresponding mcpu setting.
     \\
     \\For targets that zig-bootstrap cannot cross compile, such as
     \\freebsd and netbsd, you must have done it on another computer
@@ -21,26 +21,28 @@ fn dumpUsageAndExit() noreturn {
     std.process.exit(1);
 }
 
-// TODO make it support apple_a14
-// TODO make the windows ones use .zip and make them rename .a files to .lib
+const Tarball = struct {
+    triple: []const u8,
+    mcpu: []const u8,
+};
 
-const triples = [_][]const u8{
-    //"x86_64-windows-gnu",
-    "x86_64-macos-gnu",
-    //"x86_64-linux-musl",
-    //"x86_64-freebsd-gnu",
-    //"x86_64-netbsd-gnu",
-    "aarch64-macos-gnu",
-    //"aarch64-linux-musl",
+const tarballs = [_]Tarball{
+    .{ .triple = "aarch64-windows-gnu", .mcpu = "baseline" },
+    .{ .triple = "x86_64-windows-gnu", .mcpu = "baseline" },
+    .{ .triple = "x86_64-macos-none", .mcpu = "baseline" },
+    .{ .triple = "x86_64-linux-musl", .mcpu = "baseline" },
+    .{ .triple = "aarch64-macos-none", .mcpu = "apple_a14" },
+    .{ .triple = "aarch64-linux-musl", .mcpu = "baseline" },
+    .{ .triple = "x86_64-freebsd-gnu", .mcpu = "baseline" },
 };
 
 pub fn main() !void {
     var progress = std.Progress{};
-    const root_node = try progress.start("", triples.len);
+    const root_node = progress.start("", tarballs.len);
     defer root_node.end();
 
     var arena_allocator = std.heap.ArenaAllocator.init(std.heap.page_allocator);
-    const arena = &arena_allocator.allocator;
+    const arena = arena_allocator.allocator();
 
     const args = try std.process.argsAlloc(arena);
 
@@ -56,13 +58,17 @@ pub fn main() !void {
     var out_dir = try fs.cwd().makeOpenPath("out", .{});
     defer out_dir.close();
 
-    for (triples) |triple| {
+    for (tarballs) |tarball| {
+        const triple = tarball.triple;
+
         var triple_prog_node = root_node.start(triple, 4);
         triple_prog_node.activate();
         defer triple_prog_node.end();
 
-        const llvm_prefix = try std.fmt.allocPrint(arena, "{s}-baseline", .{triple});
-        const zig_prefix = try std.fmt.allocPrint(arena, "zig-{s}-baseline", .{triple});
+        const is_windows = std.mem.indexOf(u8, triple, "windows") != null;
+
+        const llvm_prefix = try std.fmt.allocPrint(arena, "{s}-{s}", .{ triple, tarball.mcpu });
+        const zig_prefix = try std.fmt.allocPrint(arena, "zig-{s}-{s}", .{ triple, tarball.mcpu });
         const llvm_src_path = try fs.path.join(arena, &.{
             zig_bootstrap_path, "out", llvm_prefix,
         });
@@ -79,30 +85,65 @@ pub fn main() !void {
 
         var rsync_prog_node = triple_prog_node.start("llvm files", 0);
         rsync_prog_node.activate();
-        _ = try exec(arena, &.{ "rsync", "-avzu", llvm_src_path_slash, out_prefix_slash });
+        _ = try exec(arena, &.{ "rsync", "-avu", llvm_src_path_slash, out_prefix_slash });
         rsync_prog_node.end();
 
         rsync_prog_node = triple_prog_node.start("zig files", 0);
         rsync_prog_node.activate();
-        _ = try exec(arena, &.{ "rsync", "-avzu", zig_src_path_slash, out_prefix_slash });
+        _ = try exec(arena, &.{ "rsync", "-avu", zig_src_path_slash, out_prefix_slash });
         rsync_prog_node.end();
 
         rsync_prog_node = triple_prog_node.start("delete trash", 0);
         rsync_prog_node.activate();
         for (bin_files_to_delete) |basename| {
             const path_bare = try fs.path.join(arena, &.{ out_prefix, "bin", basename });
-            fs.cwd().deleteFile(path_bare) catch continue;
+            fs.cwd().deleteFile(path_bare) catch {};
             const path_with_exe = try std.fmt.allocPrint(arena, "{s}.exe", .{path_bare});
-            fs.cwd().deleteFile(path_with_exe) catch continue;
+            fs.cwd().deleteFile(path_with_exe) catch {};
         }
         rsync_prog_node.end();
 
-        rsync_prog_node = triple_prog_node.start("create tarball", 0);
-        rsync_prog_node.activate();
-        const tar_xz_path = try std.fmt.allocPrint(arena, "{s}.tar.xz", .{tarball_basename});
-        const tarball_basename_slash = try std.fmt.allocPrint(arena, "{s}/", .{tarball_basename});
-        _ = try execCwd(arena, &.{ "tar", "cJf", tar_xz_path, tarball_basename_slash }, out_dir);
-        rsync_prog_node.end();
+        const tarball_path = if (is_windows) tarball: {
+            {
+                rsync_prog_node = triple_prog_node.start("rename static libs", 0);
+                rsync_prog_node.activate();
+                var lib_dir = try out_dir.openIterableDir(
+                    try fs.path.join(arena, &.{ tarball_basename, "lib" }),
+                    .{},
+                );
+                defer lib_dir.close();
+                var it = lib_dir.iterate();
+                while (try it.next()) |entry| {
+                    if (!std.mem.startsWith(u8, entry.name, "lib")) continue;
+                    if (!std.mem.endsWith(u8, entry.name, ".a")) continue;
+
+                    const stripped_name = entry.name[3 .. entry.name.len - 2];
+                    const new_name = try std.fmt.allocPrint(arena, "{s}.lib", .{stripped_name});
+                    try lib_dir.dir.rename(entry.name, new_name);
+                }
+                rsync_prog_node.end();
+            }
+
+            rsync_prog_node = triple_prog_node.start("create zipfile", 0);
+            rsync_prog_node.activate();
+            const zip_path = try std.fmt.allocPrint(arena, "{s}.zip", .{tarball_basename});
+            const zipfile_basename_slash = try std.fmt.allocPrint(arena, "{s}/", .{tarball_basename});
+            _ = try execCwd(arena, &.{ "7z", "a", zip_path, zipfile_basename_slash }, out_dir);
+            rsync_prog_node.end();
+
+            break :tarball zip_path;
+        } else tarball: {
+            rsync_prog_node = triple_prog_node.start("create tarball", 0);
+            rsync_prog_node.activate();
+            const tar_xz_path = try std.fmt.allocPrint(arena, "{s}.tar.xz", .{tarball_basename});
+            const tarball_basename_slash = try std.fmt.allocPrint(arena, "{s}/", .{tarball_basename});
+            _ = try execCwd(arena, &.{ "tar", "cJf", tar_xz_path, tarball_basename_slash }, out_dir);
+            rsync_prog_node.end();
+
+            break :tarball tar_xz_path;
+        };
+
+        progress.log("s3cmd put -P --add-header=\"cache-control: public, max-age=31536000, immutable\" \"{s}\" s3://ziglang.org/deps/\n", .{tarball_path});
     }
 }
 
@@ -116,13 +157,12 @@ const bin_files_to_delete = [_][]const u8{
     "wasm-ld",
 };
 
-fn exec(arena: *std.mem.Allocator, argv: []const []const u8) ![]const u8 {
+fn exec(arena: std.mem.Allocator, argv: []const []const u8) ![]const u8 {
     return execCwd(arena, argv, null);
 }
 
-fn execCwd(arena: *std.mem.Allocator, argv: []const []const u8, cwd: ?fs.Dir) ![]const u8 {
-    const child = try std.ChildProcess.init(argv, arena);
-    defer child.deinit();
+fn execCwd(arena: std.mem.Allocator, argv: []const []const u8, cwd: ?fs.Dir) ![]const u8 {
+    var child = std.ChildProcess.init(argv, arena);
 
     child.cwd_dir = cwd;
     child.stdin_behavior = .Inherit;
@@ -136,11 +176,11 @@ fn execCwd(arena: *std.mem.Allocator, argv: []const []const u8, cwd: ?fs.Dir) ![
 
     switch (try child.wait()) {
         .Exited => |code| if (code == 0) return stdout else {
-            std.debug.warn("{s} exited with code {d}\n", .{ argv[0], code });
+            std.debug.print("{s} exited with code {d}\n", .{ argv[0], code });
             std.process.exit(1);
         },
         else => {
-            std.debug.warn("{s} crashed\n", .{argv[0]});
+            std.debug.print("{s} crashed\n", .{argv[0]});
             std.process.exit(1);
         },
     }
