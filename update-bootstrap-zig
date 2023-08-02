@@ -9,11 +9,14 @@ ZIG_VERSION="$3"
 cd "$BOOTSTRAP_REPO"
 rm -rf zig/
 
-git -C "$ZIG_REPO" archive --format=tar --prefix=zig/ master | tar -x
+git -C "$ZIG_REPO" archive --format=tar --prefix=zig/ HEAD | tar -x
 rm -rf \
-  zig/.github \
-  zig/.gitignore \
-  zig/ci
+  "zig/.github" \
+  "zig/.gitignore" \
+  "zig/.gitattributes" \
+  "zig/.git" \
+  "zig/.mailmap" \
+  "zig/ci"
 
 sed -i "/^ZIG_VERSION=\".*\"\$/c\\ZIG_VERSION=\"$ZIG_VERSION\"" build
 sed -i "/^ \* zig /c\\ * zig $ZIG_VERSION" README.md
