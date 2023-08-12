@@ -16,7 +16,38 @@ rm -rf \
   {llvm,lld,clang}/build-*/ \
   clang/test/ \
   clang/tools/scan-view/ \
+  clang/tools/opt-viewer/ \
   clang/www/ \
+	clang/tools/amdgpu-arch \
+	clang/tools/clang-scan-deps \
+	clang/tools/libclang \
+  clang/utils/VtableTest/ \
+  clang/utils/perf-training/ \
+  clang/utils/CIndex/ \
+  clang/utils/clangdiag.py \
+  clang/utils/valgrind/x86_64-pc-linux-gnu_gcc-4.3.3.supp \
+  clang/utils/CaptureCmd \
+  clang/utils/ClangDataFormat.py \
+  clang/utils/module-deps-to-rsp.py \
+  clang/utils/builtin-defines.c \
+  clang/utils/token-delta.py \
+  clang/utils/ABITest/ \
+  clang/utils/modfuzz.py \
+  clang/utils/convert_arm_neon.py \
+  clang/utils/analyzer/ \
+  clang/utils/FuzzTest \
+  clang/utils/CmpDriver \
+  clang/utils/ClangVisualizers/ \
+  clang/utils/TestUtils/ \
+  clang/utils/FindSpecRefs \
+  clang/utils/make-ast-dump-check.sh \
+  clang/utils/find-unused-diagnostics.sh \
+  clang/utils/ci/ \
+  clang/utils/check_cfc/ \
+  clang/utils/creduce-clang-crash.py \
+  clang/docs/ \
+  clang/examples/ \
+  clang/unittests \
   lld/.clang-tidy \
   lld/test/ \
   llvm/test/ \
@@ -28,15 +59,13 @@ rm -rf \
   llvm/utils/reduce_pipeline.py \
   llvm/utils/reduce_pipeline_test/ \
   llvm/utils/release/ \
-  clang/docs/ \
   llvm/docs/ \
   lld/docs/ \
+	lld/unittests \
   llvm/bindings/ \
   llvm/examples/ \
-  clang/examples/ \
   llvm/utils/*.py \
   $(find -name ".clang-format" -o -name "*.rst") \
-  clang/unittests \
   llvm/unittests \
   llvm/utils/filecheck_lint \
   llvm/utils/split-file \
@@ -49,8 +78,16 @@ rm -rf \
   llvm/utils/yaml-bench \
   llvm/utils/split-file \
   llvm/utils/llvm-lit \
-  llvm/utils/llvm-locstats
-
+  llvm/utils/llvm-locstats \
+  llvm/utils/emacs \
+	llvm/tools/llvm-debuginfo-analyzer \
+	llvm/tools/llvm-debuginfod \
+	llvm/tools/llvm-dwp \
+	llvm/tools/llvm-exegesis \
+	llvm/tools/llvm-gsymutil \
+	llvm/tools/llvm-jitlink \
+	llvm/tools/llvm-libtool-darwin \
+	llvm/tools/opt-viewer
 
 echo "Inspect git status, then do the following commands:"
 echo 'git commit -a -m "update LLVM sources to XYZ"'
