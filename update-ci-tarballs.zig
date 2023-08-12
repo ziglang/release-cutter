@@ -27,13 +27,13 @@ const Tarball = struct {
 };
 
 const tarballs = [_]Tarball{
-    .{ .triple = "aarch64-windows-gnu", .mcpu = "baseline" },
-    .{ .triple = "x86_64-windows-gnu", .mcpu = "baseline" },
-    .{ .triple = "x86_64-macos-none", .mcpu = "baseline" },
+    //.{ .triple = "aarch64-windows-gnu", .mcpu = "baseline" },
+    //.{ .triple = "x86_64-windows-gnu", .mcpu = "baseline" },
+    //.{ .triple = "x86_64-macos-none", .mcpu = "baseline" },
     .{ .triple = "x86_64-linux-musl", .mcpu = "baseline" },
-    .{ .triple = "aarch64-macos-none", .mcpu = "apple_a14" },
-    .{ .triple = "aarch64-linux-musl", .mcpu = "baseline" },
-    .{ .triple = "x86_64-freebsd-gnu", .mcpu = "baseline" },
+    //.{ .triple = "aarch64-macos-none", .mcpu = "apple_a14" },
+    //.{ .triple = "aarch64-linux-musl", .mcpu = "baseline" },
+    //.{ .triple = "x86_64-freebsd-gnu", .mcpu = "baseline" },
 };
 
 pub fn main() !void {
@@ -66,6 +66,7 @@ pub fn main() !void {
         defer triple_prog_node.end();
 
         const is_windows = std.mem.indexOf(u8, triple, "windows") != null;
+        const zig_exe_basename = if (is_windows) "zig.exe" else "zig";
 
         const llvm_prefix = try std.fmt.allocPrint(arena, "{s}-{s}", .{ triple, tarball.mcpu });
         const zig_prefix = try std.fmt.allocPrint(arena, "zig-{s}-{s}", .{ triple, tarball.mcpu });
@@ -83,14 +84,34 @@ pub fn main() !void {
         const out_prefix = try fs.path.join(arena, &.{ "out", tarball_basename });
         const out_prefix_slash = try std.fmt.allocPrint(arena, "{s}/", .{out_prefix});
 
-        var rsync_prog_node = triple_prog_node.start("llvm files", 0);
-        rsync_prog_node.activate();
-        _ = try exec(arena, &.{ "rsync", "-avu", llvm_src_path_slash, out_prefix_slash });
-        rsync_prog_node.end();
-
-        rsync_prog_node = triple_prog_node.start("zig files", 0);
+        var rsync_prog_node = triple_prog_node.start("zig files", 0);
         rsync_prog_node.activate();
         _ = try exec(arena, &.{ "rsync", "-avu", zig_src_path_slash, out_prefix_slash });
+        {
+            var tarball_dir = try out_dir.openDir(tarball_basename, .{});
+            defer tarball_dir.close();
+            try tarball_dir.deleteTree("doc");
+            tarball_dir.deleteFile("LICENSE") catch {};
+            tarball_dir.deleteFile("README.md") catch {};
+            {
+                try tarball_dir.makeDir("bin");
+                const bin_zig_exe_path = try fs.path.join(arena, &.{ "bin", zig_exe_basename });
+                try tarball_dir.rename(zig_exe_basename, bin_zig_exe_path);
+            }
+            {
+                const old_lib_path = try fs.path.join(arena, &.{"lib"});
+                const tmp_lib_path = try fs.path.join(arena, &.{"lib_tmp"});
+                const new_lib_path = try fs.path.join(arena, &.{ "lib", "zig" });
+                try tarball_dir.rename(old_lib_path, tmp_lib_path);
+                try tarball_dir.makeDir("lib");
+                try tarball_dir.rename(tmp_lib_path, new_lib_path);
+            }
+        }
+        rsync_prog_node.end();
+
+        rsync_prog_node = triple_prog_node.start("llvm files", 0);
+        rsync_prog_node.activate();
+        _ = try exec(arena, &.{ "rsync", "-avu", llvm_src_path_slash, out_prefix_slash });
         rsync_prog_node.end();
 
         rsync_prog_node = triple_prog_node.start("delete trash", 0);
@@ -155,6 +176,15 @@ const bin_files_to_delete = [_][]const u8{
     "lld",
     "lld-link",
     "wasm-ld",
+    "analyze-build",
+    "clang++",
+    "clang-cl",
+    "clang-cpp",
+    "git-clang-format",
+    "hmaptool",
+    "intercept-build",
+    "scan-build",
+    "scan-build-py",
 };
 
 fn exec(arena: std.mem.Allocator, argv: []const []const u8) ![]const u8 {
