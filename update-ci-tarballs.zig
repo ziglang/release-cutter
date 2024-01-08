@@ -28,9 +28,9 @@ const Tarball = struct {
 
 const tarballs = [_]Tarball{
     //.{ .triple = "aarch64-windows-gnu", .mcpu = "baseline" },
-    //.{ .triple = "x86_64-windows-gnu", .mcpu = "baseline" },
+    .{ .triple = "x86_64-windows-gnu", .mcpu = "baseline" },
     //.{ .triple = "x86_64-macos-none", .mcpu = "baseline" },
-    .{ .triple = "x86_64-linux-musl", .mcpu = "baseline" },
+    //.{ .triple = "x86_64-linux-musl", .mcpu = "baseline" },
     //.{ .triple = "aarch64-macos-none", .mcpu = "apple_a14" },
     //.{ .triple = "aarch64-linux-musl", .mcpu = "baseline" },
     //.{ .triple = "x86_64-freebsd-gnu", .mcpu = "baseline" },
@@ -128,9 +128,9 @@ pub fn main() !void {
             {
                 rsync_prog_node = triple_prog_node.start("rename static libs", 0);
                 rsync_prog_node.activate();
-                var lib_dir = try out_dir.openIterableDir(
+                var lib_dir = try out_dir.openDir(
                     try fs.path.join(arena, &.{ tarball_basename, "lib" }),
-                    .{},
+                    .{ .iterate = true },
                 );
                 defer lib_dir.close();
                 var it = lib_dir.iterate();
@@ -140,7 +140,7 @@ pub fn main() !void {
 
                     const stripped_name = entry.name[3 .. entry.name.len - 2];
                     const new_name = try std.fmt.allocPrint(arena, "{s}.lib", .{stripped_name});
-                    try lib_dir.dir.rename(entry.name, new_name);
+                    try lib_dir.rename(entry.name, new_name);
                 }
                 rsync_prog_node.end();
             }
