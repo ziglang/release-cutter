@@ -9,9 +9,9 @@ pub fn main() !void {
     const zig_version = v: {
         var line_it = mem.tokenize(u8, build_zig_contents, "\r\n");
         while (line_it.next()) |line| {
-            if (mem.startsWith(u8, line, "const zig_version = ")) {
+            if (mem.startsWith(u8, line, "const zig_version: std.SemanticVersion = ")) {
                 var it = mem.tokenize(u8, line, " =.{,");
-                var ver: std.builtin.Version = .{ .major = 0, .minor = 0 };
+                var ver: std.SemanticVersion = .{ .major = 0, .minor = 0, .patch = 0 };
                 while (it.next()) |token| {
                     if (mem.eql(u8, token, "major")) {
                         ver.major = try std.fmt.parseInt(u32, it.next().?, 0);
@@ -24,11 +24,11 @@ pub fn main() !void {
                 break :v ver;
             }
         }
-        std.debug.print("unable to find zig version in build.zig", .{});
+        std.debug.print("unable to find zig version in build.zig\n", .{});
         std.process.exit(1);
     };
 
-    const result = try std.ChildProcess.exec(.{
+    const result = try std.process.Child.run(.{
         .allocator = arena,
         .argv = &.{ "git", "describe", "--match", "*.*.*", "--tags" },
     });
@@ -71,7 +71,7 @@ pub fn main() !void {
             const commit_height = it.next().?;
             const commit_id = it.next().?;
 
-            const ancestor_ver = try std.builtin.Version.parse(tagged_ancestor);
+            const ancestor_ver = try std.SemanticVersion.parse(tagged_ancestor);
             if (zig_version.order(ancestor_ver) != .gt) {
                 std.debug.print("Zig version '{}' must be greater than tagged ancestor '{}'\n", .{ zig_version, ancestor_ver });
                 std.process.exit(1);
