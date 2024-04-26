@@ -1,10 +1,10 @@
 #!/bin/sh
 
 WWWSRC="$HOME/dev/www.ziglang.org"
-ZIGSRC="$HOME/Downloads/zig"
+ZIGSRC="$HOME/src/zig"
 TMPDIR="$HOME/tmp"
-OLDVER="0.9.0"
-NEWVER="0.10.0"
+OLDVER="0.11.0"
+NEWVER="0.12.0"
 
 set -e
 
@@ -18,5 +18,5 @@ DOCGEN="$(find "$ZIGSRC/zig-cache" -name docgen | head -n1)"
 cp "$DOCGEN" "$TMPDIR/"
 
 echo "command to compile the release notes:"
-echo "$TMPDIR/docgen zig $WWWSRC/src/download/$NEWVER/release-notes.html $WWWSRC/content/download/$NEWVER/release-notes.html"
+echo "$TMPDIR/docgen --zig zig $WWWSRC/src/download/$NEWVER/release-notes.html $WWWSRC/content/download/$NEWVER/release-notes.html"
 
