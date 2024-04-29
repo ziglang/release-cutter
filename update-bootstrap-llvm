@@ -15,39 +15,43 @@ cp -r "$LLVM_REPO/cmake/" ./
 rm -rf \
   {llvm,lld,clang}/build-*/ \
   clang/test/ \
+  clang/www/ \
   clang/tools/scan-view/ \
   clang/tools/opt-viewer/ \
-  clang/www/ \
 	clang/tools/amdgpu-arch \
 	clang/tools/clang-scan-deps \
 	clang/tools/libclang \
-  clang/utils/VtableTest/ \
-  clang/utils/perf-training/ \
-  clang/utils/CIndex/ \
-  clang/utils/clangdiag.py \
-  clang/utils/valgrind/x86_64-pc-linux-gnu_gcc-4.3.3.supp \
-  clang/utils/CaptureCmd \
-  clang/utils/ClangDataFormat.py \
-  clang/utils/module-deps-to-rsp.py \
-  clang/utils/builtin-defines.c \
-  clang/utils/token-delta.py \
+	clang/tools/clang-format \
   clang/utils/ABITest/ \
-  clang/utils/modfuzz.py \
-  clang/utils/convert_arm_neon.py \
-  clang/utils/analyzer/ \
-  clang/utils/FuzzTest \
-  clang/utils/CmpDriver \
+  clang/utils/CIndex/ \
+  clang/utils/CaptureCmd \
   clang/utils/ClangVisualizers/ \
-  clang/utils/TestUtils/ \
+  clang/utils/CmpDriver \
   clang/utils/FindSpecRefs \
-  clang/utils/make-ast-dump-check.sh \
+  clang/utils/FuzzTest \
+  clang/utils/TestUtils/ \
+  clang/utils/VtableTest/ \
+  clang/utils/analyzer/ \
+  clang/utils/perf-training/ \
+  clang/utils/valgrind/x86_64-pc-linux-gnu_gcc-4.3.3.supp \
+  clang/utils/ClangDataFormat.py \
+  clang/utils/analyze_safe_buffer_debug_notes.py \
+  clang/utils/builtin-defines.c \
+  clang/utils/clangdiag.py \
+  clang/utils/convert_arm_neon.py \
+  clang/utils/creduce-clang-crash.py \
   clang/utils/find-unused-diagnostics.sh \
+  clang/utils/make-ast-dump-check.sh \
+  clang/utils/modfuzz.py \
+  clang/utils/module-deps-to-rsp.py \
+  clang/utils/token-delta.py \
+  clang/utils/update_options_td_flags.py \
   clang/utils/ci/ \
   clang/utils/check_cfc/ \
-  clang/utils/creduce-clang-crash.py \
   clang/docs/ \
   clang/examples/ \
   clang/unittests \
+  clang/cmake/caches/ \
   lld/.clang-tidy \
   lld/test/ \
   llvm/test/ \
@@ -59,6 +63,7 @@ rm -rf \
   llvm/utils/reduce_pipeline.py \
   llvm/utils/reduce_pipeline_test/ \
   llvm/utils/release/ \
+  llvm/utils/mlgo-utils/ \
   llvm/docs/ \
   lld/docs/ \
 	lld/unittests \
@@ -70,6 +75,7 @@ rm -rf \
   llvm/utils/filecheck_lint \
   llvm/utils/split-file \
   llvm/utils/TableGen/jupyter \
+  llvm/utils/TableGen/README.md \
   llvm/utils/FileCheck \
   llvm/utils/PerfectShuffle \
   llvm/utils/count \
@@ -80,6 +86,10 @@ rm -rf \
   llvm/utils/llvm-lit \
   llvm/utils/llvm-locstats \
   llvm/utils/emacs \
+  llvm/tools/spirv-tools/ \
+  llvm/tools/sancov/ \
+  llvm/tools/dsymutil/ \
+  llvm/tools/llc/ \
 	llvm/tools/llvm-debuginfo-analyzer \
 	llvm/tools/llvm-debuginfod \
 	llvm/tools/llvm-dwp \
@@ -87,6 +97,9 @@ rm -rf \
 	llvm/tools/llvm-gsymutil \
 	llvm/tools/llvm-jitlink \
 	llvm/tools/llvm-libtool-darwin \
+	llvm/tools/llvm-remarkutil \
+	llvm/tools/llvm-readtapi \
+	llvm/tools/llvm-reduce \
 	llvm/tools/opt-viewer
 
 echo "Inspect git status, then do the following commands:"
