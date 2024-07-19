@@ -27,18 +27,19 @@ const Tarball = struct {
 };
 
 const tarballs = [_]Tarball{
-    //.{ .triple = "aarch64-windows-gnu", .mcpu = "baseline" },
+    .{ .triple = "aarch64-windows-gnu", .mcpu = "baseline" },
     .{ .triple = "x86_64-windows-gnu", .mcpu = "baseline" },
-    //.{ .triple = "x86_64-macos-none", .mcpu = "baseline" },
-    //.{ .triple = "x86_64-linux-musl", .mcpu = "baseline" },
-    //.{ .triple = "aarch64-macos-none", .mcpu = "apple_a14" },
-    //.{ .triple = "aarch64-linux-musl", .mcpu = "baseline" },
-    //.{ .triple = "x86_64-freebsd-gnu", .mcpu = "baseline" },
+    .{ .triple = "x86_64-macos-none", .mcpu = "baseline" },
+    .{ .triple = "x86_64-linux-musl", .mcpu = "baseline" },
+    .{ .triple = "aarch64-macos-none", .mcpu = "apple_a14" },
+    .{ .triple = "aarch64-linux-musl", .mcpu = "baseline" },
+    .{ .triple = "x86_64-freebsd-gnu", .mcpu = "baseline" },
 };
 
 pub fn main() !void {
-    var progress = std.Progress{};
-    const root_node = progress.start("", tarballs.len);
+    const root_node = std.Progress.start(.{
+        .estimated_total_items = tarballs.len,
+    });
     defer root_node.end();
 
     var arena_allocator = std.heap.ArenaAllocator.init(std.heap.page_allocator);
@@ -61,8 +62,7 @@ pub fn main() !void {
     for (tarballs) |tarball| {
         const triple = tarball.triple;
 
-        var triple_prog_node = root_node.start(triple, 4);
-        triple_prog_node.activate();
+        const triple_prog_node = root_node.start(triple, 4);
         defer triple_prog_node.end();
 
         const is_windows = std.mem.indexOf(u8, triple, "windows") != null;
@@ -85,7 +85,6 @@ pub fn main() !void {
         const out_prefix_slash = try std.fmt.allocPrint(arena, "{s}/", .{out_prefix});
 
         var rsync_prog_node = triple_prog_node.start("zig files", 0);
-        rsync_prog_node.activate();
         _ = try exec(arena, &.{ "rsync", "-avu", zig_src_path_slash, out_prefix_slash });
         {
             var tarball_dir = try out_dir.openDir(tarball_basename, .{});
@@ -110,12 +109,10 @@ pub fn main() !void {
         rsync_prog_node.end();
 
         rsync_prog_node = triple_prog_node.start("llvm files", 0);
-        rsync_prog_node.activate();
         _ = try exec(arena, &.{ "rsync", "-avu", llvm_src_path_slash, out_prefix_slash });
         rsync_prog_node.end();
 
         rsync_prog_node = triple_prog_node.start("delete trash", 0);
-        rsync_prog_node.activate();
         for (bin_files_to_delete) |basename| {
             const path_bare = try fs.path.join(arena, &.{ out_prefix, "bin", basename });
             fs.cwd().deleteFile(path_bare) catch {};
@@ -127,7 +124,6 @@ pub fn main() !void {
         const tarball_path = if (is_windows) tarball: {
             {
                 rsync_prog_node = triple_prog_node.start("rename static libs", 0);
-                rsync_prog_node.activate();
                 var lib_dir = try out_dir.openDir(
                     try fs.path.join(arena, &.{ tarball_basename, "lib" }),
                     .{ .iterate = true },
@@ -146,7 +142,6 @@ pub fn main() !void {
             }
 
             rsync_prog_node = triple_prog_node.start("create zipfile", 0);
-            rsync_prog_node.activate();
             const zip_path = try std.fmt.allocPrint(arena, "{s}.zip", .{tarball_basename});
             const zipfile_basename_slash = try std.fmt.allocPrint(arena, "{s}/", .{tarball_basename});
             _ = try execCwd(arena, &.{ "7z", "a", zip_path, zipfile_basename_slash }, out_dir);
@@ -155,7 +150,6 @@ pub fn main() !void {
             break :tarball zip_path;
         } else tarball: {
             rsync_prog_node = triple_prog_node.start("create tarball", 0);
-            rsync_prog_node.activate();
             const tar_xz_path = try std.fmt.allocPrint(arena, "{s}.tar.xz", .{tarball_basename});
             const tarball_basename_slash = try std.fmt.allocPrint(arena, "{s}/", .{tarball_basename});
             _ = try execCwd(arena, &.{ "tar", "cJf", tar_xz_path, tarball_basename_slash }, out_dir);
@@ -164,7 +158,7 @@ pub fn main() !void {
             break :tarball tar_xz_path;
         };
 
-        progress.log("s3cmd put -P --add-header=\"cache-control: public, max-age=31536000, immutable\" \"{s}\" s3://ziglang.org/deps/\n", .{tarball_path});
+        std.debug.print("s3cmd put -P --add-header=\"cache-control: public, max-age=31536000, immutable\" \"{s}\" s3://ziglang.org/deps/\n", .{tarball_path});
     }
 }
 
@@ -192,7 +186,7 @@ fn exec(arena: std.mem.Allocator, argv: []const []const u8) ![]const u8 {
 }
 
 fn execCwd(arena: std.mem.Allocator, argv: []const []const u8, cwd: ?fs.Dir) ![]const u8 {
-    var child = std.ChildProcess.init(argv, arena);
+    var child = std.process.Child.init(argv, arena);
 
     child.cwd_dir = cwd;
     child.stdin_behavior = .Inherit;
