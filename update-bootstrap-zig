@@ -19,6 +19,7 @@ rm -rf \
   "zig/ci"
 
 sed -i "/^ZIG_VERSION=\".*\"\$/c\\ZIG_VERSION=\"$ZIG_VERSION\"" build
+sed -i "/^set ZIG_VERSION=\".*\"\r\$/c\\set ZIG_VERSION=\"$ZIG_VERSION\"\r" build.bat
 sed -i "/^ \* zig /c\\ * zig $ZIG_VERSION" README.md
 
 git add -A
