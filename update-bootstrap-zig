@@ -21,6 +21,7 @@ rm -rf \
 sed -i "/^ZIG_VERSION=\".*\"\$/c\\ZIG_VERSION=\"$ZIG_VERSION\"" build
 sed -i "/^set ZIG_VERSION=\".*\"\r\$/c\\set ZIG_VERSION=\"$ZIG_VERSION\"\r" build.bat
 sed -i "/^ \* zig /c\\ * zig $ZIG_VERSION" README.md
+sed -i "/^        const char \*zig_version = \"/c\\        const char *zig_version = \"$ZIG_VERSION\";" zig/bootstrap.c
 
 git add -A
 git commit -m "update zig sources to $ZIG_VERSION"
