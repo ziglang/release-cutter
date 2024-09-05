@@ -14,6 +14,7 @@ cp -r "$LLVM_REPO/lld/" ./
 cp -r "$LLVM_REPO/cmake/" ./
 rm -rf \
   {llvm,lld,clang}/build-*/ \
+  clang/bindings/ \
   clang/test/ \
   clang/www/ \
   clang/tools/scan-view/ \
@@ -22,6 +23,8 @@ rm -rf \
 	clang/tools/clang-scan-deps \
 	clang/tools/libclang \
 	clang/tools/clang-format \
+	clang/tools/clang-installapi/ \
+	clang/tools/clang-nvlink-wrapper/ \
   clang/utils/ABITest/ \
   clang/utils/CIndex/ \
   clang/utils/CaptureCmd \
@@ -55,6 +58,7 @@ rm -rf \
   lld/.clang-tidy \
   lld/test/ \
   llvm/test/ \
+  llvm/benchmarks/ \
   llvm/utils/{benchmark,docker,gn,lit,vim,vscode,git}/ \
   llvm/utils/pipeline.py \
   llvm/utils/llvm-mca-compare.py \
@@ -100,7 +104,8 @@ rm -rf \
 	llvm/tools/llvm-remarkutil \
 	llvm/tools/llvm-readtapi \
 	llvm/tools/llvm-reduce \
-	llvm/tools/opt-viewer
+	llvm/tools/opt-viewer \
+  llvm/tools/reduce-chunk-list
 
 echo "Inspect git status, then do the following commands:"
 echo 'git commit -a -m "update LLVM sources to XYZ"'
