@@ -24,16 +24,25 @@ fn dumpUsageAndExit() noreturn {
 const Tarball = struct {
     triple: []const u8,
     mcpu: []const u8,
+    dest: Destination,
+};
+
+const Destination = enum {
+    // ssh to ziggy.ziglang.org and zanic.ziglang.org
+    self_x86,
+    // ssh to zero.ziglang.org
+    self_arm,
+    // ember.ziglang.org https://ziglang.org/deps/*
+    www_deps,
 };
 
 const tarballs = [_]Tarball{
-    .{ .triple = "aarch64-windows-gnu", .mcpu = "baseline" },
-    .{ .triple = "x86_64-windows-gnu", .mcpu = "baseline" },
-    .{ .triple = "x86_64-macos-none", .mcpu = "baseline" },
-    .{ .triple = "x86_64-linux-musl", .mcpu = "baseline" },
-    .{ .triple = "aarch64-macos-none", .mcpu = "apple_a14" },
-    .{ .triple = "aarch64-linux-musl", .mcpu = "baseline" },
-    .{ .triple = "x86_64-freebsd-gnu", .mcpu = "baseline" },
+    .{ .triple = "aarch64-windows-gnu", .mcpu = "baseline", .dest = .www_deps },
+    .{ .triple = "x86_64-windows-gnu", .mcpu = "baseline", .dest = .www_deps },
+    .{ .triple = "x86_64-macos-none", .mcpu = "baseline", .dest = .www_deps },
+    .{ .triple = "x86_64-linux-musl", .mcpu = "baseline", .dest = .self_x86 },
+    .{ .triple = "aarch64-macos-none", .mcpu = "apple_a14", .dest = .www_deps },
+    .{ .triple = "aarch64-linux-musl", .mcpu = "baseline", .dest = .self_arm },
 };
 
 pub fn main() !void {
@@ -158,7 +167,18 @@ pub fn main() !void {
             break :tarball tar_xz_path;
         };
 
-        std.debug.print("s3cmd put -P --add-header=\"cache-control: public, max-age=31536000, immutable\" \"{s}\" s3://ziglang.org/deps/\n", .{tarball_path});
+        switch (tarball.dest) {
+            .self_x86 => {
+                std.debug.print("scp \"{s}\" ci@ziggy.ziglang.org:deps/\n", .{tarball_path});
+                std.debug.print("scp \"{s}\" ci@zanic.ziglang.org:deps/\n", .{tarball_path});
+            },
+            .self_arm => {
+                std.debug.print("scp \"{s}\" ci@zero.ziglang.org:deps/\n", .{tarball_path});
+            },
+            .www_deps => {
+                std.debug.print("scp \"{s}\" ci@ember.ziglang.org:/var/www/html/deps/\n", .{tarball_path});
+            },
+        }
     }
 }
 
