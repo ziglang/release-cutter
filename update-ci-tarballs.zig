@@ -199,6 +199,7 @@ const bin_files_to_delete = [_][]const u8{
     "intercept-build",
     "scan-build",
     "scan-build-py",
+    "scan-build.bat",
 };
 
 fn exec(arena: std.mem.Allocator, argv: []const []const u8) ![]const u8 {
