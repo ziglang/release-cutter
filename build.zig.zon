@@ -1,0 +1,16 @@
+.{
+    // TODO: remove name, version, fingerprint, paths since this package isn't meant to be consumed
+    .name = .release_cutter,
+    .version = "0.0.0",
+    .fingerprint = 0xd156b1b0d775e8c4,
+    .paths = .{""},
+
+    .minimum_zig_version = "0.14.0-dev.3446+50b40c962",
+
+    .dependencies = .{
+        .minisign = .{
+            .url = "https://github.com/jedisct1/zig-minisign/archive/5602468807f2ef51ba7c72b8c38e3ac6713df5c9.tar.gz",
+            .hash = "minizign-0.1.5-AAAAANfZAQBkzPfrlRTOplQx5x34vg-mCfnwJenr4gae",
+        },
+    },
+}
