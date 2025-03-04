@@ -79,7 +79,7 @@ pub fn main() !void {
     var dir = try std.fs.cwd().openDir("tiers-data", .{});
 
     const stdout_file = std.io.getStdOut();
-    var unbuffered_stdout = stdout_file.writer();
+    const unbuffered_stdout = stdout_file.writer();
     var bw = std.io.bufferedWriter(unbuffered_stdout);
     const stdout = bw.writer();
 
@@ -87,10 +87,9 @@ pub fn main() !void {
         const basename = try std.fmt.allocPrint(arena, "{s}.json", .{tier.id});
         std.log.debug("looking at {s}", .{basename});
         const json_text = try dir.readFileAlloc(arena, basename, 10 * 1024 * 1024);
-        var parser = std.json.Parser.init(arena, .alloc_always);
-        const tree = try parser.parse(json_text);
+        const tree = try std.json.parseFromSliceLeaky(std.json.Value, arena, json_text, .{});
 
-        const data_obj = &tree.root.object.get("data").?.object;
+        const data_obj = &tree.object.get("data").?.object;
         const sponsors_obj = &data_obj.get("organization").?.object.get("sponsors").?.object;
         const nodes_array = &sponsors_obj.get("nodes").?.array;
         for (nodes_array.items) |node| {
