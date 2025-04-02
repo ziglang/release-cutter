@@ -14,17 +14,20 @@ cp -r "$LLVM_REPO/lld/" ./
 cp -r "$LLVM_REPO/cmake/" ./
 rm -rf \
   {llvm,lld,clang}/build-*/ \
+  clang/README.md \
   clang/bindings/ \
   clang/test/ \
   clang/www/ \
   clang/tools/scan-view/ \
   clang/tools/opt-viewer/ \
-	clang/tools/amdgpu-arch \
-	clang/tools/clang-scan-deps \
-	clang/tools/libclang \
-	clang/tools/clang-format \
-	clang/tools/clang-installapi/ \
-	clang/tools/clang-nvlink-wrapper/ \
+  clang/tools/amdgpu-arch \
+  clang/tools/clang-scan-deps \
+  clang/tools/libclang \
+  clang/tools/clang-format \
+  clang/tools/clang-installapi/ \
+  clang/tools/clang-nvlink-wrapper/ \
+  clang/tools/clang-shlib/simple_version_script.map.in \
+  clang/tools/clang-sycl-linker/ \
   clang/utils/ABITest/ \
   clang/utils/CIndex/ \
   clang/utils/CaptureCmd \
@@ -57,6 +60,10 @@ rm -rf \
   clang/cmake/caches/ \
   lld/.clang-tidy \
   lld/test/ \
+  lld/Maintainers.md \
+  lld/docs/ \
+  lld/unittests \
+  llvm/Maintainers.md \
   llvm/test/ \
   llvm/benchmarks/ \
   llvm/utils/{benchmark,docker,gn,lit,vim,vscode,git}/ \
@@ -69,8 +76,6 @@ rm -rf \
   llvm/utils/release/ \
   llvm/utils/mlgo-utils/ \
   llvm/docs/ \
-  lld/docs/ \
-	lld/unittests \
   llvm/bindings/ \
   llvm/examples/ \
   llvm/utils/*.py \
@@ -90,21 +95,25 @@ rm -rf \
   llvm/utils/llvm-lit \
   llvm/utils/llvm-locstats \
   llvm/utils/emacs \
+  llvm/utils/spirv-sim/ \
   llvm/tools/spirv-tools/ \
   llvm/tools/sancov/ \
   llvm/tools/dsymutil/ \
   llvm/tools/llc/ \
-	llvm/tools/llvm-debuginfo-analyzer \
-	llvm/tools/llvm-debuginfod \
-	llvm/tools/llvm-dwp \
-	llvm/tools/llvm-exegesis \
-	llvm/tools/llvm-gsymutil \
-	llvm/tools/llvm-jitlink \
-	llvm/tools/llvm-libtool-darwin \
-	llvm/tools/llvm-remarkutil \
-	llvm/tools/llvm-readtapi \
-	llvm/tools/llvm-reduce \
-	llvm/tools/opt-viewer \
+  llvm/tools/llvm-debuginfo-analyzer \
+  llvm/tools/llvm-debuginfod \
+  llvm/tools/llvm-dwp \
+  llvm/tools/llvm-exegesis \
+  llvm/tools/llvm-gsymutil \
+  llvm/tools/llvm-jitlink \
+  llvm/tools/llvm-libtool-darwin \
+  llvm/tools/llvm-readtapi \
+  llvm/tools/llvm-reduce \
+  llvm/tools/llvm-remarkutil \
+  llvm/tools/opt-viewer \
+  llvm/tools/llvm-cgdata/ \
+  llvm/tools/llvm-ctxprof-util/ \
+  llvm/tools/llvm-debuginfod-find/Opts.td \
   llvm/tools/reduce-chunk-list
 
 echo "Inspect git status, then do the following commands:"
