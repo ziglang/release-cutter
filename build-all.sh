@@ -1,3 +1,4 @@
+set -e
 CMAKE_GENERATOR=Ninja ./build aarch64-windows-gnu baseline
 CMAKE_GENERATOR=Ninja ./build x86_64-windows-gnu baseline
 CMAKE_GENERATOR=Ninja ./build x86_64-macos-none baseline
