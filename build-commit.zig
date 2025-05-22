@@ -12,7 +12,6 @@ const std = @import("std");
 const Allocator = std.mem.Allocator;
 const mem = std.mem;
 const fatal = std.process.fatal;
-const minisign = @import("minisign");
 const log = std.log;
 
 const Target = struct {
@@ -191,7 +190,7 @@ pub fn main() !void {
         print("zig-{s}/", .{zig_ver}),
         "--sort=name",
     });
-    sign(&env_map, tarballs_dir, src_tarball_name, builds_dir);
+    signAndMove(&env_map, tarballs_dir, src_tarball_name, builds_dir);
     try addTemplateEntry(&template_map, "src", builds_dir, src_tarball_name);
 
     run(&env_map, bootstrap_dir, &.{ "git", "clean", "-fd" });
@@ -235,7 +234,7 @@ pub fn main() !void {
         print("zig-bootstrap-{s}/", .{zig_ver}),
         "--sort=name",
     });
-    sign(&env_map, tarballs_dir, bootstrap_src_tarball_name, builds_dir);
+    signAndMove(&env_map, tarballs_dir, bootstrap_src_tarball_name, builds_dir);
     try addTemplateEntry(&template_map, "bootstrap", builds_dir, bootstrap_src_tarball_name);
 
     const zig_exe = try bootstrap_dir.realpathAlloc(arena, "out/host/bin/zig");
@@ -268,13 +267,13 @@ pub fn main() !void {
             });
             break :t tarball_filename;
         };
-        sign(&env_map, tarballs_dir, tarball_filename, builds_dir);
+        signAndMove(&env_map, tarballs_dir, tarball_filename, builds_dir);
         try addTemplateEntry(&template_map, target.triple, builds_dir, tarball_filename);
     }
 
     const index_json_basename = print("zig-{s}-index.json", .{zig_ver});
     try render(&template_map, index_json_template_filename, tarballs_dir, index_json_basename, .plain);
-    sign(&env_map, tarballs_dir, index_json_basename, builds_dir);
+    signAndMove(&env_map, tarballs_dir, index_json_basename, builds_dir);
 
     // Instead of updating via git, update directly to prevent the www.ziglang.org git
     // repo from growing too big.
@@ -523,10 +522,12 @@ fn updateLine(dir: std.fs.Dir, file_path: []const u8, prefix: []const u8, replac
     });
 }
 
-/// also move into the dest dir
-fn sign(env_map: *const std.process.EnvMap, src_dir: std.fs.Dir, basename: []const u8, dest_dir: std.fs.Dir) void {
-    // Unfortunately minisign package does not support signing yet.
-    _ = minisign;
+fn signAndMove(
+    env_map: *const std.process.EnvMap,
+    src_dir: std.fs.Dir,
+    basename: []const u8,
+    dest_dir: std.fs.Dir,
+) void {
     std.fs.rename(src_dir, basename, dest_dir, basename) catch |err| {
         fatal("failed to move {s}: {s}", .{ basename, @errorName(err) });
     };
