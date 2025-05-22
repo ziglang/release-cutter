@@ -1,2 +1,3 @@
 /tiers-data/
 /.zig-cache/
+/zig-out/
