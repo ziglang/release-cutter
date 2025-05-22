@@ -452,7 +452,7 @@ fn pluckLastSuccessFromJson(json_text: []const u8) []const u8 {
 }
 
 test pluckLastSuccessFromJson {
-    try std.testing.expectEqual("f925e1379aa53228610df9b7ffc3d87dbcce0dbb", pluckLastSuccessFromJson(example_response));
+    try std.testing.expectEqualStrings("f925e1379aa53228610df9b7ffc3d87dbcce0dbb", pluckLastSuccessFromJson(example_response));
 }
 
 fn pluckLastTarballFromJsonFile(dir: std.fs.Dir, file_path: []const u8) []const u8 {
