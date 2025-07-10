@@ -32,6 +32,8 @@ const Destination = enum {
     self_x86,
     // ssh to zero.ziglang.org
     self_arm,
+    // ssh to {callisto,europa,ganymede,io}.ziglang.org:2511-2514
+    self_riscv64,
     // ember.ziglang.org https://ziglang.org/deps/*
     www_deps,
 };
@@ -43,6 +45,7 @@ const tarballs = [_]Tarball{
     .{ .triple = "x86_64-linux-musl", .mcpu = "baseline", .dest = .self_x86 },
     .{ .triple = "aarch64-macos-none", .mcpu = "apple_a14", .dest = .www_deps },
     .{ .triple = "aarch64-linux-musl", .mcpu = "baseline", .dest = .self_arm },
+    .{ .triple = "riscv64-linux-musl", .mcpu = "spacemit_x60", .dest = .self_riscv64 },
 };
 
 pub fn main() !void {
@@ -174,6 +177,12 @@ pub fn main() !void {
             },
             .self_arm => {
                 std.debug.print("scp \"{s}\" ci@zero.ziglang.org:deps/\n", .{tarball_path});
+            },
+            .self_riscv64 => {
+                std.debug.print("scp \"{s}\" ci@callisto.ziglang.org:deps/ -P 2511\n", .{tarball_path});
+                std.debug.print("scp \"{s}\" ci@europa.ziglang.org:deps/ -P 2512\n", .{tarball_path});
+                std.debug.print("scp \"{s}\" ci@ganymede.ziglang.org:deps/ -P 2513\n", .{tarball_path});
+                std.debug.print("scp \"{s}\" ci@io.ziglang.org:deps/ -P 2514\n", .{tarball_path});
             },
             .www_deps => {
                 std.debug.print("scp \"{s}\" ci@ember.ziglang.org:/var/www/html/deps/\n", .{tarball_path});
