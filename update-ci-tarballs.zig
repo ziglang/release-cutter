@@ -43,7 +43,7 @@ const tarballs = [_]Tarball{
     .{ .triple = "x86_64-windows-gnu", .mcpu = "baseline", .dest = .www_deps },
     .{ .triple = "x86_64-macos-none", .mcpu = "baseline", .dest = .www_deps },
     .{ .triple = "x86_64-linux-musl", .mcpu = "baseline", .dest = .self_x86 },
-    .{ .triple = "aarch64-macos-none", .mcpu = "apple_a14", .dest = .www_deps },
+    .{ .triple = "aarch64-macos-none", .mcpu = "baseline", .dest = .www_deps },
     .{ .triple = "aarch64-linux-musl", .mcpu = "baseline", .dest = .self_arm },
     .{ .triple = "riscv64-linux-musl", .mcpu = "baseline", .dest = .self_riscv64 },
 };
