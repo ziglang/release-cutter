@@ -225,7 +225,7 @@ fn execCwd(arena: std.mem.Allocator, argv: []const []const u8, cwd: ?fs.Dir) ![]
 
     try child.spawn();
 
-    const stdout_reader = child.stdout.?.reader();
+    const stdout_reader = child.stdout.?.deprecatedReader();
     const stdout = try stdout_reader.readAllAlloc(arena, 10 * 1024 * 1024);
 
     switch (try child.wait()) {
