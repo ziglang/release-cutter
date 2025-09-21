@@ -29,26 +29,32 @@ const Tarball = struct {
 
 const Destination = enum {
     // ssh to ziggy.ziglang.org and zanic.ziglang.org
-    self_x86,
+    ziggy_zanic,
     // ssh to zero.ziglang.org
-    self_arm,
+    zero,
     // ssh to {callisto,europa,ganymede,io}.ziglang.org:2511-2514
-    self_riscv64,
+    jupiters,
     // ssh to dragon.ziglang.org:2510
-    self_loongarch64,
+    dragon,
+    // ssh to freebie.ziglang.org:2515
+    freebie,
     // ember.ziglang.org https://ziglang.org/deps/*
-    www_deps,
+    ember,
 };
 
 const tarballs = [_]Tarball{
-    .{ .triple = "aarch64-windows-gnu", .mcpu = "baseline", .dest = .www_deps },
-    .{ .triple = "x86_64-windows-gnu", .mcpu = "baseline", .dest = .www_deps },
-    .{ .triple = "x86_64-macos-none", .mcpu = "baseline", .dest = .www_deps },
-    .{ .triple = "x86_64-linux-musl", .mcpu = "baseline", .dest = .self_x86 },
-    .{ .triple = "aarch64-macos-none", .mcpu = "baseline", .dest = .www_deps },
-    .{ .triple = "aarch64-linux-musl", .mcpu = "baseline", .dest = .self_arm },
-    .{ .triple = "riscv64-linux-musl", .mcpu = "baseline", .dest = .self_riscv64 },
-    .{ .triple = "loongarch64-linux-musl", .mcpu = "baseline", .dest = .self_loongarch64 },
+    .{ .triple = "x86_64-freebsd-none", .mcpu = "baseline", .dest = .dragon },
+
+    .{ .triple = "aarch64-linux-musl", .mcpu = "baseline", .dest = .zero },
+    .{ .triple = "loongarch64-linux-musl", .mcpu = "baseline", .dest = .dragon },
+    .{ .triple = "riscv64-linux-musl", .mcpu = "baseline", .dest = .jupiters },
+    .{ .triple = "x86_64-linux-musl", .mcpu = "baseline", .dest = .ziggy_zanic },
+
+    .{ .triple = "aarch64-macos-none", .mcpu = "baseline", .dest = .ember },
+    .{ .triple = "x86_64-macos-none", .mcpu = "baseline", .dest = .ember },
+
+    .{ .triple = "aarch64-windows-gnu", .mcpu = "baseline", .dest = .ember },
+    .{ .triple = "x86_64-windows-gnu", .mcpu = "baseline", .dest = .ember },
 };
 
 pub fn main() !void {
@@ -174,23 +180,26 @@ pub fn main() !void {
         };
 
         switch (tarball.dest) {
-            .self_x86 => {
+            .ziggy_zanic => {
                 std.debug.print("scp \"{s}\" ci@ziggy.ziglang.org:deps/\n", .{tarball_path});
                 std.debug.print("scp \"{s}\" ci@zanic.ziglang.org:deps/\n", .{tarball_path});
             },
-            .self_arm => {
+            .zero => {
                 std.debug.print("scp \"{s}\" ci@zero.ziglang.org:deps/\n", .{tarball_path});
             },
-            .self_riscv64 => {
+            .jupiters => {
                 std.debug.print("scp \"{s}\" ci@callisto.ziglang.org:deps/ -P 2511\n", .{tarball_path});
                 std.debug.print("scp \"{s}\" ci@europa.ziglang.org:deps/ -P 2512\n", .{tarball_path});
                 std.debug.print("scp \"{s}\" ci@ganymede.ziglang.org:deps/ -P 2513\n", .{tarball_path});
                 std.debug.print("scp \"{s}\" ci@io.ziglang.org:deps/ -P 2514\n", .{tarball_path});
             },
-            .self_loongarch64 => {
+            .dragon => {
                 std.debug.print("scp \"{s}\" ci@dragon.ziglang.org:deps/ -P 2510\n", .{tarball_path});
             },
-            .www_deps => {
+            .freebie => {
+                std.debug.print("scp \"{s}\" ci@freebie.ziglang.org:deps/ -P 2515\n", .{tarball_path});
+            },
+            .ember => {
                 std.debug.print("scp \"{s}\" ci@ember.ziglang.org:/var/www/html/deps/\n", .{tarball_path});
             },
         }
