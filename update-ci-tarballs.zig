@@ -36,6 +36,8 @@ const Destination = enum {
     jupiters,
     // ssh to dragon.ziglang.org:2510
     dragon,
+    // ssh to {blue,iron}.ziglang.org
+    blue_iron,
     // ssh to freebie.ziglang.org:2515
     freebie,
     // ember.ziglang.org https://ziglang.org/deps/*
@@ -48,6 +50,7 @@ const tarballs = [_]Tarball{
     .{ .triple = "aarch64-linux-musl", .mcpu = "baseline", .dest = .zero },
     .{ .triple = "loongarch64-linux-musl", .mcpu = "baseline", .dest = .dragon },
     .{ .triple = "riscv64-linux-musl", .mcpu = "baseline", .dest = .jupiters },
+    .{ .triple = "s390x-linux-musl", .mcpu = "baseline", .dest = .blue_iron },
     .{ .triple = "x86_64-linux-musl", .mcpu = "baseline", .dest = .ziggy_zanic },
 
     .{ .triple = "aarch64-macos-none", .mcpu = "baseline", .dest = .ember },
@@ -195,6 +198,10 @@ pub fn main() !void {
             },
             .dragon => {
                 std.debug.print("scp \"{s}\" ci@dragon.ziglang.org:deps/ -P 2510\n", .{tarball_path});
+            },
+            .blue_iron => {
+                std.debug.print("scp \"{s}\" ci@blue.ziglang.org:deps/\n", .{tarball_path});
+                std.debug.print("scp \"{s}\" ci@iron.ziglang.org:deps/\n", .{tarball_path});
             },
             .freebie => {
                 std.debug.print("scp \"{s}\" ci@freebie.ziglang.org:deps/ -P 2515\n", .{tarball_path});
