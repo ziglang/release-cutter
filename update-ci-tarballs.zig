@@ -54,7 +54,6 @@ const tarballs = [_]Tarball{
     .{ .triple = "x86_64-linux-musl", .mcpu = "baseline", .dest = .ziggy_zanic },
 
     .{ .triple = "aarch64-macos-none", .mcpu = "baseline", .dest = .ember },
-    .{ .triple = "x86_64-macos-none", .mcpu = "baseline", .dest = .ember },
 
     .{ .triple = "aarch64-windows-gnu", .mcpu = "baseline", .dest = .ember },
     .{ .triple = "x86_64-windows-gnu", .mcpu = "baseline", .dest = .ember },
