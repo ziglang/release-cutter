@@ -45,7 +45,7 @@ const Destination = enum {
 };
 
 const tarballs = [_]Tarball{
-    .{ .triple = "x86_64-freebsd-none", .mcpu = "baseline", .dest = .dragon },
+    .{ .triple = "x86_64-freebsd-none", .mcpu = "baseline", .dest = .freebie },
 
     .{ .triple = "aarch64-linux-musl", .mcpu = "baseline", .dest = .zero },
     .{ .triple = "loongarch64-linux-musl", .mcpu = "baseline", .dest = .dragon },
